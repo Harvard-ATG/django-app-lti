@@ -71,11 +71,11 @@ setup(
             'Django>=1.6', 
             'ims_lti_py', 
             'django-braces',
-            'django_auth_lti',
+            'django_auth_lti==1.2.0',
         ],
 
         dependency_links=[
-                'http://github.com/Harvard-University-iCommons/django-auth-lti/tarball/master#egg=django_auth_lti',
+                'http://github.com/Harvard-University-iCommons/django-auth-lti/tarball/master#egg=django_auth_lti-1.2.0',
         ],
 
         # List additional groups of dependencies here (e.g. development
