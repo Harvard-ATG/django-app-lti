@@ -71,7 +71,6 @@ setup(
             'Django>=1.6', 
             'ims_lti_py', 
             'django-braces',
-            'django-auth-lti',
         ],
 
         dependency_links=[
