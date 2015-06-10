@@ -67,13 +67,14 @@ setup(
         # your project is installed. For an analysis of "install_requires" vs pip's
         # requirements files see:
         # https://packaging.python.org/en/latest/requirements.html
-        install_requires=['Django', 'django-auth-lti',  'ims_lti_py', 'django-braces'],
-
-        # install ims_lti_py and django-auth-lti via their github repos
-        dependency_links=[
-                'https://github.com/tophatmonocle/ims_lti_py/archive/master.zip',
-                'git+https://github.com/Harvard-University-iCommons/django-auth-lti.git@v1.2.0#egg=django-auth-lti',
+        install_requires=[
+            'Django', 
+            'ims_lti_py', 
+            'django-braces'
+            'git+https://github.com/Harvard-University-iCommons/django-auth-lti.git@v1.2.0#egg=django-auth-lti',
         ],
+
+        dependency_links=[],
 
         # List additional groups of dependencies here (e.g. development
         # dependencies). You can install these using the following syntax,
