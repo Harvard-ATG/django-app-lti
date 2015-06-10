@@ -75,7 +75,7 @@ setup(
         ],
 
         dependency_links=[
-            'git+https://github.com/Harvard-University-iCommons/django-auth-lti.git@v1.2.0#egg=django-auth-lti',
+            'git+https://github.com/Harvard-University-iCommons/django-auth-lti.git@v1.2.0#egg=django-auth-lti-1.2.0',
         ],
 
         # List additional groups of dependencies here (e.g. development
