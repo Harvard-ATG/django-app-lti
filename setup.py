@@ -70,7 +70,7 @@ setup(
         install_requires=[
             'Django', 
             'ims_lti_py', 
-            'django-braces'
+            'django-braces',
             'git+https://github.com/Harvard-University-iCommons/django-auth-lti.git@v1.2.0#egg=django-auth-lti',
         ],
 
