@@ -1,0 +1,6 @@
+*.pyc
+*.komodoproject
+/venv/
+/build/
+/dist/
+/django_app_lti.egg-info/
