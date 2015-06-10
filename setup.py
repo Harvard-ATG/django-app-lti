@@ -75,7 +75,7 @@ setup(
         ],
 
         dependency_links=[
-            'http://github.com/Harvard-University-iCommons/tarball/master#egg=django-auth-lti-1.2.0',
+            'http://github.com/Harvard-University-iCommons/django-auth-lti/tarball/master#egg=django-auth-lti-1.2.0',
         ],
 
         # List additional groups of dependencies here (e.g. development
