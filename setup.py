@@ -71,10 +71,12 @@ setup(
             'Django', 
             'ims_lti_py', 
             'django-braces',
-            'git+https://github.com/Harvard-University-iCommons/django-auth-lti.git@v1.2.0#egg=django-auth-lti',
+            'django-auth-lti==1.2.0',
         ],
 
-        dependency_links=[],
+        dependency_links=[
+            'git+https://github.com/Harvard-University-iCommons/django-auth-lti.git@v1.2.0#egg=django-auth-lti',
+        ],
 
         # List additional groups of dependencies here (e.g. development
         # dependencies). You can install these using the following syntax,
