@@ -87,7 +87,7 @@ class LTILaunchView(CsrfExemptMixin, LoginRequiredMixin, View):
         '''
         This hook is called to process the POST request (initializes models).
         '''
-        self._process_post()
+        self.process_post(request)
         return self
     
     def hook_after_post(self, request):
@@ -105,7 +105,7 @@ class LTILaunchView(CsrfExemptMixin, LoginRequiredMixin, View):
         launch_redirect_url = LTI_SETUP['LAUNCH_REDIRECT_URL']
         return redirect(reverse(launch_redirect_url, kwargs={"course_id": self.lti_resource.course.id}))
     
-    def _process_post(self):
+    def process_post(self, request):
         '''
         Helper function to process the post request.
         '''
