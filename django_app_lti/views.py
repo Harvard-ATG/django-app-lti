@@ -94,8 +94,6 @@ class LTILaunchView(CsrfExemptMixin, LoginRequiredMixin, View):
         '''
         This hook is called after the POST has been processed (i.e. models setup, etc).
         '''
-        if self.lti_resource is not None:
-            request.session['course_id'] = self.lti_resource.course.id
         return self
     
     def hook_get_redirect(self):
@@ -103,7 +101,9 @@ class LTILaunchView(CsrfExemptMixin, LoginRequiredMixin, View):
         Returns a redirect for after the POST request.
         '''
         launch_redirect_url = LTI_SETUP['LAUNCH_REDIRECT_URL']
-        return redirect(reverse(launch_redirect_url, kwargs={"course_id": self.lti_resource.course.id}))
+        if self.lti_resource is not None:
+            return redirect(reverse(launch_redirect_url, kwargs={"course_id": self.lti_resource.course.id}))
+        return redirect(reverse(launch_redirect_url))
     
     def process_post(self, request):
         '''
@@ -145,6 +145,7 @@ class LTILaunchView(CsrfExemptMixin, LoginRequiredMixin, View):
         
         # save a reference to the LTI resource object
         self.lti_resource = lti_resource
+        request.session['course_id'] = self.lti_resource.course.id
 
         return self        
 
