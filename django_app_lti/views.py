@@ -66,7 +66,7 @@ class LTILaunchView(CsrfExemptMixin, LoginRequiredMixin, View):
         request.session['course_id'] = lti_resource.course.id
         
         # Redirect back to the index
-        return redirect(reverse(LTI_SETUP['LTI_LAUNCH_REDIRECT_URL'], kwargs={"course_id": course_id}))
+        return redirect(reverse(LTI_SETUP['LAUNCH_REDIRECT_URL'], kwargs={"course_id": course_id}))
 
 class LTIToolConfigView(View):
     LAUNCH_URL = LTI_SETUP.get('LTI_LAUNCH_URL', 'lti:launch')
