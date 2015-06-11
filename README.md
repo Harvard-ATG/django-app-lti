@@ -74,7 +74,7 @@ You can generate the LTI tool configuration (XML) here, assuming you are running
 
 ## Advanced Setup
 
-To customize the behavior of the LTI launch and how the POST request is processed, create a new view and by subclassing  ```django_app_lti.views.LTILaunchView``` and modify your settings.py configuration so that the ```LAUNCH_URL```  points to that view (don't forget to add the URL route for the launch view you created).
+To customize the behavior of the LTI launch and how the POST request is processed in terms of initializing models and other launch data, subclass ```django_app_lti.views.LTILaunchView``` and modify your settings.py configuration so that the ```LAUNCH_URL``` points to that view (don't forget to add the URL route for the launch view you created).
 
 Example:
 
@@ -83,16 +83,20 @@ from django_app_lti.views import LTILaunchView
 
 class MyLTILaunchView(LTILaunchView):
     def hook_before_post(self, request):
-        super(MyLTILaunchView, self).hook_before_post(request)
+        '''Called before models are created and initialized in hook_process_post().'''
+        pass
 
     def hook_process_post(self, request):
+        '''Creates and initializes models.'''
         super(MyLTILaunchView, self).hook_process_post(request)
 
     def hook_after_post(self, request):
-        super(MyLTILaunchView, self).hook_after_post(request)
+        '''Called after models are initialized.'''
+        pass
 
     def hook_get_redirect(self):
+        '''Returns a redirect after the POST request has been processed.'''
         return super(MyLTILaunchView, self).hook_get_redirect()
 ```
 
-The models are created and initialized in the **hook_process_post()** method, so if you don't want to create any models when the LTI tool is launched, simply override that method, omitting the call to super().  
+The models are created and initialized in the **hook_process_post()** method, so if you don't want to create any models when the LTI tool is launched, simply override that method, omitting the call to the superclass method.
