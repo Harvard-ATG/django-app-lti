@@ -70,12 +70,10 @@ setup(
         install_requires=[
             'Django>=1.6', 
             'ims_lti_py', 
-            'django-braces',
-            'django-auth-lti',
+            'django-braces'
         ],
 
         dependency_links=[
-                'http://github.com/Harvard-University-iCommons/django-auth-lti/tarball/master#egg=django_auth_lti',
         ],
 
         # List additional groups of dependencies here (e.g. development

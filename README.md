@@ -1,7 +1,6 @@
 # django-app-lti
 
-This is a django application that works alongisde [django-auth-lti](https://github.com/Harvard-University-iCommons/django-auth-lti) 
-to provide basic LTI integration. 
+This is a django application that provides basic LTI integration. It is intended to be used alongside the [django-auth-lti](https://github.com/Harvard-University-iCommons/django-auth-lti)  library, which provides middleware and backend classes for authentication.
 
 ## Installation
 
@@ -9,6 +8,7 @@ Install via pip:
 
 ```bash
 pip install git+https://github.com/Harvard-ATG/django-app-lti@master#egg=django-app-lti
+pip install git+https://github.com/Harvard-University-iCommons/django-auth-lti@master#egg=django-auth-lti
 ```
 
 In your django project, modify settings.py:
