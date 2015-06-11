@@ -20,14 +20,96 @@ def logged_out_view(request):
     return HttpResponse('Logged out successfully.')
 
 class LTILaunchView(CsrfExemptMixin, LoginRequiredMixin, View):
+    """
+    This view handles an LTI launch request, which is a POST request that contains
+    launch data from the tool consumer.
+    
+    The view is responsible for processing the launch data and setting up models for
+    the tool provider (i.e. the django application), and then redirecting to the
+    appropriate endpoint in the tool provider.
+    
+    When a launch request is received, the default behavior of this view is to initialize
+    the following models when a launch request is received:
+    
+    1. LTIResource - an instance represents a placement of the tool in the consumer.
+    2. LTICourse - an instance represents a "course" or "learning context" that is associated
+                   with that LTIResource.
+    3. LTICourseUser - an instance represents a user's relationship with the course, including
+                       their roles, as provided by the consumer.
+    
+    After the models have been initialized, the view redirects to the appropriate endpoint
+    in the django application.
+    
+    To customize the behavior of the launch view, extend or override any of the following "hook"
+    methods:
+    
+    - hook_before_post(self, request)
+    - hook_process_post(self, request)
+    - hook_after_post(self, request)
+    - hook_get_redirect(self)
+    
+    For more information about the basic launch parameters, see the LTI v1.1.1 specification:
+    
+    http://www.imsglobal.org/LTI/v1p1p1/ltiIMGv1p1p1.html
+    """
+    
+    def __init__(self, *args, **kwargs):
+        super(LTILaunchView, self).__init__(*args, **kwargs)
+        self.lti_resource = None
+        
     def get(self, request, *args, **kwargs):
         '''Shows an error message because LTI launch requests must be POSTed.'''
         content = 'Invalid LTI launch request.'
         return HttpResponse(content, content_type='text/html', status=200)
 
     def post(self, request, *args, **kwargs):
-        '''Handles the LTI launch request and redirects to the main page. '''
+        '''
+        Handles the LTI launch request and redirects to the main page.
         
+        All logic and processing is done by the "hook" methods so that any of them
+        can be augmented or overridden by subclasses.
+        '''
+        
+        self.hook_before_post(request)
+        self.hook_process_post(request)
+        self.hook_after_post(request)
+        redirect = self.hook_get_redirect()
+        
+        return redirect
+    
+    def hook_before_post(self, request):
+        '''
+        This hook is called before the POST request has been processed (models not initialized yet).
+        '''
+        return self
+    
+    def hook_process_post(self, request):
+        '''
+        This hook is called to process the POST request (initializes models).
+        '''
+        self._process_post()
+        return self
+    
+    def hook_after_post(self, request):
+        '''
+        This hook is called after the POST has been processed (i.e. models setup, etc).
+        '''
+        if self.lti_resource is not None:
+            request.session['course_id'] = self.lti_resource.course.id
+        return self
+    
+    def hook_get_redirect(self):
+        '''
+        Returns a redirect for after the POST request.
+        '''
+        launch_redirect_url = LTI_SETUP['LAUNCH_REDIRECT_URL']
+        return redirect(reverse(launch_redirect_url, kwargs={"course_id": self.lti_resource.course.id}))
+    
+    def _process_post(self):
+        '''
+        Helper function to process the post request.
+        '''
+
         # Collect a subset of the LTI launch parameters for mapping the
         # tool resource instance to this app's internal course instance.
         launch = {
@@ -61,12 +143,11 @@ class LTILaunchView(CsrfExemptMixin, LoginRequiredMixin, View):
         else:
             lti_course_user = LTICourseUser.createCourseUser(user=request.user, course=lti_resource.course, roles=launch_roles)
         
-        # Save the course ID in the session
-        course_id = lti_resource.course.id
-        request.session['course_id'] = lti_resource.course.id
-        
-        # Redirect back to the index
-        return redirect(reverse(LTI_SETUP['LAUNCH_REDIRECT_URL'], kwargs={"course_id": course_id}))
+        # save a reference to the LTI resource object
+        self.lti_resource = lti_resource
+
+        return self        
+
 
 class LTIToolConfigView(View):
     LAUNCH_URL = LTI_SETUP.get('LTI_LAUNCH_URL', 'lti:launch')
