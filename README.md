@@ -71,3 +71,28 @@ Make sure you execute ```./manage.py syncdb && ./manage.py migrate``` to setup t
 You can generate the LTI tool configuration (XML) here, assuming you are running the built-in django server with ```./manage.py runserver```:
 
 [http://localhost:8000/lti/config](http://localhost:8000/lti/config)
+
+## Advanced Setup
+
+To customize the behavior of the LTI launch and how the POST request is processed, create a new view and by subclassing  ```django_app_lti.views.LTILaunchView``` and modify your settings.py configuration so that the ```LAUNCH_URL```  points to that view (don't forget to add the URL route for the launch view you created).
+
+Example:
+
+```python
+from django_app_lti.views import LTILaunchView
+
+class MyLTILaunchView(LTILaunchView):
+    def hook_before_post(self, request):
+        super(MyLTILaunchView, self).hook_before_post(request)
+
+    def hook_process_post(self, request):
+        super(MyLTILaunchView, self).hook_process_post(request)
+
+    def hook_after_post(self, request):
+        super(MyLTILaunchView, self).hook_after_post(request)
+
+    def hook_get_redirect(self):
+        return super(MyLTILaunchView, self).hook_get_redirect()
+```
+
+The models are created and initialized in the **hook_process_post()** method, so if you don't want to create any models when the LTI tool is launched, simply override that method, omitting the call to super().  
