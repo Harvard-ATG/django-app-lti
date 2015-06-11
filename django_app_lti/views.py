@@ -150,7 +150,7 @@ class LTILaunchView(CsrfExemptMixin, LoginRequiredMixin, View):
 
 
 class LTIToolConfigView(View):
-    LAUNCH_URL = LTI_SETUP.get('LTI_LAUNCH_URL', 'lti:launch')
+    LAUNCH_URL = LTI_SETUP.get('LAUNCH_URL', 'lti:launch')
     """
     Outputs LTI configuration XML for Canvas as specified in the IMS Global Common Cartridge Profile.
 
