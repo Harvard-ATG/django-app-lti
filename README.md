@@ -72,7 +72,7 @@ You can generate the LTI tool configuration (XML) here, assuming you are running
 
 [http://localhost:8000/lti/config](http://localhost:8000/lti/config)
 
-## Advanced Setup
+## Customizing the LTI launch
 
 To customize the behavior of the LTI launch and how the POST request is processed in terms of initializing models and other launch data, subclass ```django_app_lti.views.LTILaunchView``` and modify your settings.py configuration so that the ```LAUNCH_URL``` points to that view (don't forget to add the URL route for the launch view you created).
 
