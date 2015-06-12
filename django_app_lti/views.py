@@ -107,7 +107,7 @@ class LTILaunchView(CsrfExemptMixin, LoginRequiredMixin, View):
         Returns a redirect for after the POST request.
         '''
         launch_redirect_url = LTI_SETUP['LAUNCH_REDIRECT_URL']
-        if self.lti_resource is not None:
+        if self.lti_resource is not None and self.lti_resource.course is not None:
             return redirect(reverse(launch_redirect_url, kwargs={"course_id": self.lti_resource.course.id}))
         return redirect(reverse(launch_redirect_url))
     
