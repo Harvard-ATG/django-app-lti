@@ -83,14 +83,14 @@ class LTIResource(models.Model):
         return None
     
     @classmethod
-    def setupResource(cls, launch, with_course=False):
+    def setupResource(cls, launch, create_course=False):
         if not ("consumer_key" in launch and "resource_link_id" in launch): 
             raise Exception("Missing required launch parameters: consumer_key and resource_link_id")
- 
+        
         course = None
-        if with_course:
-            course_name_short = launch.pop('course_name_short', 'untitled')
-            course_name = launch.pop('course_name', 'Untitled Course')
+        course_name_short = launch.pop('course_name_short', 'untitled')
+        course_name = launch.pop('course_name', 'Untitled Course')
+        if create_course:
             course = LTICourse.objects.create(course_name_short=course_name_short,course_name=course_name)
  
         return cls.objects.create(course=course, **launch)

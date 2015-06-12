@@ -139,8 +139,8 @@ class LTILaunchView(CsrfExemptMixin, LoginRequiredMixin, View):
         if LTIResource.hasResource(*resource_identifiers):
             lti_resource = LTIResource.getResource(*resource_identifiers)
         else:
-            with_course = INITIALIZE_MODELS in ("resource_and_course", "resource_and_course_users")
-            lti_resource = LTIResource.setupResource(launch, with_course)
+            create_course = INITIALIZE_MODELS in ("resource_and_course", "resource_and_course_users")
+            lti_resource = LTIResource.setupResource(launch, create_course)
             if lti_resource.course:
                 request.session['course_id'] = lti_resource.course.id
         
