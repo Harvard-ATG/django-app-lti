@@ -69,7 +69,7 @@ class LTIResource(models.Model):
     canvas_course_id = models.CharField(max_length=255, blank=True, null=True)
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
-    course = models.ForeignKey(LTICourse)
+    course = models.ForeignKey(LTICourse, null=True)
     
     @classmethod
     def hasResource(cls, consumer_key, resource_link_id):
