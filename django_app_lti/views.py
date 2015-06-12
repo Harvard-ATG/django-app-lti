@@ -11,6 +11,11 @@ from braces.views import CsrfExemptMixin, LoginRequiredMixin
 from .models import LTIResource, LTICourse, LTICourseUser
 
 LTI_SETUP = settings.LTI_SETUP
+INITIALIZE_MODELS = LTI_SETUP.get('INITIALIZE_MODELS', False)
+VALID_INITIALIZE_MODELS_OPTIONS = (False, "resource_only", "resource_and_course", "resource_and_course_users")
+if not (INITIALIZE_MODELS in VALID_INITIALIZE_MODELS_OPTIONS):
+    raise Exception('LTI_SETUP["INITIALIZE_MODELS"] is invalid or missing: must be one of %s' % VALID_INITIALIZE_MODELS_OPTIONS)
+
 
 def logout_view(request):
     logout(request)
@@ -87,7 +92,8 @@ class LTILaunchView(CsrfExemptMixin, LoginRequiredMixin, View):
         '''
         This hook is called to process the POST request (initializes models).
         '''
-        self.process_post(request)
+        if INITIALIZE_MODELS is not False:
+            self.initialize_models(request)
         return self
     
     def hook_after_post(self, request):
@@ -105,9 +111,9 @@ class LTILaunchView(CsrfExemptMixin, LoginRequiredMixin, View):
             return redirect(reverse(launch_redirect_url, kwargs={"course_id": self.lti_resource.course.id}))
         return redirect(reverse(launch_redirect_url))
     
-    def process_post(self, request):
+    def initialize_models(self, request):
         '''
-        Helper function to process the post request.
+        Helper function to process the post request and setup models.
         '''
 
         # Collect a subset of the LTI launch parameters for mapping the
@@ -130,22 +136,25 @@ class LTILaunchView(CsrfExemptMixin, LoginRequiredMixin, View):
         # If no LTI resource is found, automatically setup a new course instance
         # and associate it with the LTI resource.
         resource_identifiers = [launch[x] for x in ('consumer_key', 'resource_link_id')]
-        if LTIResource.hasCourse(*resource_identifiers):
+        if LTIResource.hasResource(*resource_identifiers):
             lti_resource = LTIResource.getResource(*resource_identifiers)
         else:
-            lti_resource = LTIResource.setupCourse(launch)
+            with_course = INITIALIZE_MODELS in ("resource_and_course", "resource_and_course_users")
+            lti_resource = LTIResource.setupResource(launch, with_course)
+            if lti_resource.course:
+                request.session['course_id'] = lti_resource.course.id
         
         # Associate the authenticated user with the course instance.
-        launch_roles = request.POST.get('roles', '')
-        if LTICourseUser.hasCourseUser(user=request.user, course=lti_resource.course):
-            lti_course_user = LTICourseUser.getCourseUser(user=request.user, course=lti_resource.course)
-            lti_course_user.updateRoles(launch_roles)
-        else:
-            lti_course_user = LTICourseUser.createCourseUser(user=request.user, course=lti_resource.course, roles=launch_roles)
+        if INITIALIZE_MODELS == "resource_and_course_users":
+            launch_roles = request.POST.get('roles', '')
+            if LTICourseUser.hasCourseUser(user=request.user, course=lti_resource.course):
+                lti_course_user = LTICourseUser.getCourseUser(user=request.user, course=lti_resource.course)
+                lti_course_user.updateRoles(launch_roles)
+            else:
+                lti_course_user = LTICourseUser.createCourseUser(user=request.user, course=lti_resource.course, roles=launch_roles)
         
         # save a reference to the LTI resource object
         self.lti_resource = lti_resource
-        request.session['course_id'] = self.lti_resource.course.id
 
         return self        
 

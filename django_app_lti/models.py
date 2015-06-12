@@ -72,7 +72,7 @@ class LTIResource(models.Model):
     course = models.ForeignKey(LTICourse)
     
     @classmethod
-    def hasCourse(cls, consumer_key, resource_link_id):
+    def hasResource(cls, consumer_key, resource_link_id):
         return cls.objects.filter(consumer_key=consumer_key,resource_link_id=resource_link_id).exists()
     
     @classmethod
@@ -83,7 +83,7 @@ class LTIResource(models.Model):
         return None
     
     @classmethod
-    def setupCourse(cls, launch):
+    def setupResource(cls, launch, with_course=False):
         if not ("consumer_key" in launch and "resource_link_id" in launch): 
             raise Exception("Missing required launch parameters: consumer_key and resource_link_id")
  
