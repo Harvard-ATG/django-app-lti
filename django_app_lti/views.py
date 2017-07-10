@@ -10,6 +10,9 @@ from braces.views import CsrfExemptMixin, LoginRequiredMixin
 
 from .models import LTIResource, LTICourse, LTICourseUser
 
+import urlparse
+import urllib
+
 LTI_SETUP = settings.LTI_SETUP
 INITIALIZE_MODELS = LTI_SETUP.get('INITIALIZE_MODELS', False)
 VALID_INITIALIZE_MODELS_OPTIONS = (False, "resource_only", "resource_and_course", "resource_and_course_users")
@@ -177,7 +180,8 @@ class LTIToolConfigView(View):
             host = 'https://' + request.get_host()
         else:
             host = 'http://' + request.get_host()
-        return host + reverse(self.LAUNCH_URL);
+        url = host + reverse(self.LAUNCH_URL)
+        return self._url(url);
 
     def set_ext_params(self, lti_tool_config):
         '''
@@ -222,3 +226,19 @@ class LTIToolConfigView(View):
         self.set_ext_params(lti_tool_config)
         return HttpResponse(lti_tool_config.to_xml(), content_type='text/xml', status=200)
 
+    def _url(self, url):
+        '''
+        Returns the URL with the resource_link_id parameter removed from the URL, which
+        may have been automatically added by the reverse() method. The reverse() method is
+        patched by django-auth-lti in applications using the MultiLTI middleware. Since
+        some applications may not be using the patched version of reverse(), we must parse the
+        URL manually and remove the resource_link_id parameter if present. This will
+        prevent any issues upon redirect from the launch.
+        '''
+        parts = urlparse.urlparse(url)
+        query_dict = urlparse.parse_qs(parts.query)
+        if 'resource_link_id' in query_dict:
+            query_dict.pop('resource_link_id', None)
+        new_parts = list(parts)
+        new_parts[4] = urllib.urlencode(query_dict)
+        return urlparse.urlunparse(new_parts)

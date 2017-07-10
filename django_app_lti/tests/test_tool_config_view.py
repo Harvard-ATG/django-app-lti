@@ -1,4 +1,5 @@
 import django
+from django.conf import settings
 from django.core.urlresolvers import reverse, resolve
 from django.test import TestCase, RequestFactory
 from mock import Mock
@@ -23,12 +24,24 @@ class ToolConfigViewTest(TestCase):
 
         self.assertEqual(actual, expected)
 
+    def test_url_excludes_resource_link_id(self):
+        test_urls = (
+            'https://example.com/lti/launch?resource_link_id=None',
+            'https://example.com/lti/launch?resource_link_id=123fabc456',
+            'https://example.com/lti/launch?resource_link_id=',
+            'https://example.com/lti/launch?resource_link_id',
+        )
+        expected = 'https://example.com/lti/launch'
+        for url in test_urls:
+            actual = self.view._url(url)
+            self.assertEqual(actual, expected)
+
     def test_tool_config(self):
         launch_url = "http://foo.bar/"
         self.view.get_launch_url = Mock(return_value=launch_url)
 
         expected = ToolConfig(
-            title=self.view.TOOL_TITLE,
+            title=settings.LTI_SETUP.get('TOOL_TITLE'),
             launch_url=launch_url,
             secure_launch_url=launch_url
         )
