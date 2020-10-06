@@ -16,7 +16,7 @@ setup(
         # Versions should comply with PEP440.  For a discussion on single-sourcing
         # the version across setup.py and the project code, see
         # https://packaging.python.org/en/latest/single_source_version.html
-        version='1.0.2',
+        version='1.0.3',
 
         description='LTI app for django',
 
@@ -54,6 +54,10 @@ setup(
             'Programming Language :: Python :: 3.2',
             'Programming Language :: Python :: 3.3',
             'Programming Language :: Python :: 3.4',
+            'Programming Language :: Python :: 3.5',
+            'Programming Language :: Python :: 3.6',
+            'Programming Language :: Python :: 3.7',
+            'Programming Language :: Python :: 3.8',
             ],
 
         # What does your project relate to?
@@ -68,9 +72,10 @@ setup(
         # requirements files see:
         # https://packaging.python.org/en/latest/requirements.html
         install_requires=[
-            'Django>=1.6', 
-            'ims_lti_py', 
-            'django-braces'
+            'Django>=2.0', 
+            'lti', 
+            'django-braces',
+            'future'
         ],
 
         dependency_links=[

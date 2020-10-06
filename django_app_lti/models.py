@@ -1,3 +1,4 @@
+from builtins import object
 from django.db import models
 from django.conf import settings
 
@@ -19,14 +20,14 @@ class LTICourse(models.Model):
     def __unicode__(self):
         return "%s (ID: %s)" % (self.course_name, self.id)
 
-    class Meta:
+    class Meta(object):
         verbose_name = 'LTI Course'
         verbose_name_plural = 'LTI Courses '
         ordering = ['course_name_short','course_name']
 
 class LTICourseUser(models.Model):
-    course = models.ForeignKey(LTICourse)
-    user = models.ForeignKey(settings.AUTH_USER_MODEL)
+    course = models.ForeignKey(LTICourse, on_delete=models.CASCADE)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     roles = models.CharField(max_length=2048, blank=True, null=True, verbose_name="Roles")
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
@@ -57,7 +58,7 @@ class LTICourseUser(models.Model):
     def __unicode__(self):
         return "%s %s (Roles: %s)" % (self.course.course_name_short, self.user.username, self.roles)
 
-    class Meta:
+    class Meta(object):
         verbose_name = 'LTI Course Users'
         verbose_name_plural = 'LTI Course Users '
         ordering = ['course','user', 'roles']
@@ -69,7 +70,7 @@ class LTIResource(models.Model):
     canvas_course_id = models.CharField(max_length=255, blank=True, null=True)
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
-    course = models.ForeignKey(LTICourse, null=True)
+    course = models.ForeignKey(LTICourse, on_delete=models.CASCADE, null=True)
     
     @classmethod
     def hasResource(cls, consumer_key, resource_link_id):
@@ -98,7 +99,7 @@ class LTIResource(models.Model):
     def __unicode__(self):
         return "%s %s (Canvas Course ID: %s)" % (self.consumer_key, self.resource_link_id, self.canvas_course_id)
 
-    class Meta:
+    class Meta(object):
         verbose_name = 'LTI Resource'
         verbose_name_plural = 'LTI Resources'
         ordering = ['consumer_key','resource_link_id', 'context_id']

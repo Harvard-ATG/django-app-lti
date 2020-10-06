@@ -1,17 +1,18 @@
+from future import standard_library
+standard_library.install_aliases()
 from django.http import HttpResponse
 from django.shortcuts import redirect
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.contrib.auth import logout
 from django.views.generic import View
 from django.conf import settings
 
-from ims_lti_py.tool_config import ToolConfig
+from urllib.parse import parse_qs, urlparse, urlencode, urlunparse
+
+from lti import ToolConfig
 from braces.views import CsrfExemptMixin, LoginRequiredMixin
 
 from .models import LTIResource, LTICourse, LTICourseUser
-
-import urlparse
-import urllib
 
 LTI_SETUP = settings.LTI_SETUP
 INITIALIZE_MODELS = LTI_SETUP.get('INITIALIZE_MODELS', False)
@@ -235,10 +236,10 @@ class LTIToolConfigView(View):
         URL manually and remove the resource_link_id parameter if present. This will
         prevent any issues upon redirect from the launch.
         '''
-        parts = urlparse.urlparse(url)
-        query_dict = urlparse.parse_qs(parts.query)
+        parts = urlparse(url)
+        query_dict = parse_qs(parts.query)
         if 'resource_link_id' in query_dict:
             query_dict.pop('resource_link_id', None)
         new_parts = list(parts)
-        new_parts[4] = urllib.urlencode(query_dict)
-        return urlparse.urlunparse(new_parts)
+        new_parts[4] = urlencode(query_dict)
+        return urlunparse(new_parts)

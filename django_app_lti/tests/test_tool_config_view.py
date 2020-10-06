@@ -1,9 +1,9 @@
 import django
 from django.conf import settings
-from django.core.urlresolvers import reverse, resolve
+from django.urls import reverse, resolve
 from django.test import TestCase, RequestFactory
 from mock import Mock
-from ims_lti_py.tool_config import ToolConfig
+from lti import ToolConfig
 
 from django_app_lti.views import LTIToolConfigView
 

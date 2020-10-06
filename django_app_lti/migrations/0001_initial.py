@@ -34,8 +34,8 @@ class Migration(migrations.Migration):
                 ('roles', models.CharField(max_length=2048, null=True, verbose_name=b'Roles', blank=True)),
                 ('created', models.DateTimeField(auto_now_add=True)),
                 ('updated', models.DateTimeField(auto_now=True)),
-                ('course', models.ForeignKey(to='django_app_lti.LTICourse')),
-                ('user', models.ForeignKey(to=settings.AUTH_USER_MODEL)),
+                ('course', models.ForeignKey(on_delete=models.CASCADE, to='django_app_lti.LTICourse')),
+                ('user', models.ForeignKey(on_delete=models.CASCADE, to=settings.AUTH_USER_MODEL)),
             ],
             options={
                 'ordering': ['course', 'user', 'roles'],
@@ -53,7 +53,7 @@ class Migration(migrations.Migration):
                 ('canvas_course_id', models.CharField(max_length=255, null=True, blank=True)),
                 ('created', models.DateTimeField(auto_now_add=True)),
                 ('updated', models.DateTimeField(auto_now=True)),
-                ('course', models.ForeignKey(to='django_app_lti.LTICourse', null=True)),
+                ('course', models.ForeignKey(on_delete=models.CASCADE, to='django_app_lti.LTICourse', null=True)),
             ],
             options={
                 'ordering': ['consumer_key', 'resource_link_id', 'context_id'],
