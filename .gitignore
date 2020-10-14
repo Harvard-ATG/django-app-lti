@@ -1,5 +1,6 @@
 *.pyc
 *.komodoproject
+*.bak
 /pyenv/
 /venv/
 /build/

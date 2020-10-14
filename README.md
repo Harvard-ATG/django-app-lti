@@ -15,16 +15,16 @@ In your django project, modify settings.py:
 
 ```python
 # Add to your installed django apps
-INSTALLED_APPS = (
+INSTALLED_APPS = [
     'django_auth_lti',
     'django_app_lti',
-)
+]
 
 # Add to middleware (for django-auth-lti)
-MIDDLEWARE_CLASSES = (
+MIDDLEWARE = [
     # ... other middleware ...
     'django_auth_lti.middleware.LTIAuthMiddleware',
-)
+]
 
 # Add to authentication backends (for django-auth-lti)
 AUTHENTICATION_BACKENDS = (
@@ -64,7 +64,7 @@ Modify your urls.py:
 import django_app_lti.urls
 
 # Include the lti app's urls
-url(r'^lti/', include(django_app_lti.urls, namespace="lti"))
+path('lti/', include(django_app_lti.urls, namespace="lti"))
 ```
 
 Make sure you execute ```./manage.py syncdb && ./manage.py migrate``` to setup the LTI app models.

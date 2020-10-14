@@ -2,13 +2,13 @@ DEBUG = True
 SECRET_KEY = "secret"
 TEMPLATE_DEBUG = True
 ALLOWED_HOSTS = []
-INSTALLED_APPS = (
+INSTALLED_APPS = [
     'django.contrib.auth',
     'django.contrib.staticfiles',
     'django.contrib.contenttypes',
     'django_app_lti',
-)
-MIDDLEWARE_CLASSES = ()
+]
+MIDDLEWARE = []
 ROOT_URLCONF = 'django_app_lti.urls'
 DATABASES = {
     'default': { 
