@@ -1,4 +1,4 @@
-Django==2.2.0
+Django==2.2.27
 django-braces==1.13.0
 funcsigs==1.0.2
 httplib2==0.18.1
